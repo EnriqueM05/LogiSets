@@ -17,7 +17,7 @@
   },
   "build": {
     "appId": "com.yourcompany.yourapp",
-    "productName": "app",
+    "productName": "LogiSets",
     "mac": {
       "category": "public.app-category.utilities",
       "icon": "build-assets/AppIcon.icns",
@@ -30,8 +30,10 @@
       "target": "AppImage"
     },
     "dmg": {
+      "background": "build-assets/background.jpg",
+      "icon": "build-assets/AppIcon.icns",
       "iconSize": 100,
-      "artifactName": "TabliumInstaller.dmg",
+      "artifactName": "LogiSetsInstaller.dmg",
       "window": {
         "width": 835,
         "height": 600
