@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Calculadora de conjuntos</title>
+    <link
+      rel="stylesheet"
+      href="./css/style.css"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Pacifico&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="calculadora">
+      <button class="theme-button">☀️</button>
+      <h1>Calculadora de conjuntos</h1>
+      <h3>Enrique Milo, Camila Briseño, Jorge Delgadillo y Sofía Camacho</h3>
+      <div class="input-area">
+        <label for="conjuntoA">Conjunto A:</label>
+        <input
+          type="text"
+          id="conjuntoA"
+          placeholder="Ej: 1,2,3,4"
+        />
+        <div
+          id="cardA"
+          style="margin-bottom: 10px; color: #007bff"
+        ></div>
+        <label for="conjuntoB">Conjunto B:</label>
+        <input
+          type="text"
+          id="conjuntoB"
+          placeholder="Ej: 5,6,7,8"
+        />
+        <div
+          id="cardB"
+          style="margin-bottom: 20px; color: #007bff"
+        ></div>
+        <label for="operacion">Operación:</label>
+        <select id="operacion">
+          <option value="A∩B">Intersección A ∩ B</option>
+          <option value="A∪B">Unión A ∪ B</option>
+          <option value="A-B">Diferencia A - B</option>
+          <option value="B-A">Diferencia B - A</option>
+          <option value="A∆B">Diferencia simétrica A∆B</option>
+          <option value="Ac">Complemento Ac</option>
+          <option value="Bc">Complemento Bc</option>
+          <option value="A×B">Producto cartesiano A × B</option>
+          <option value="B×A">Producto cartesiano B × A</option>
+          <option value="A×A">Producto cartesiano A × A</option>
+          <option value="B×B">Producto cartesiano B × B</option>
+          <option value="P(A)">Conjunto potencia P(A)</option>
+          <option value="P(B)">Conjunto potencia P(B)</option>
+          <option value="|A|">Cardinalidad |A|</option>
+          <option value="|B|">Cardinalidad |B|</option>
+          <option value="analizarA×B">
+            Análisis subconjunto aleatorio de A×B
+          </option>
+          <option value="analizarB×A">
+            Análisis subconjunto aleatorio de B×A
+          </option>
+          <option value="analizarA×A">
+            Análisis subconjunto aleatorio de A×A
+          </option>
+          <option value="analizarB×B">
+            Análisis subconjunto aleatorio de B×B
+          </option>
+        </select>
+        <button
+          id="calcularBtn"
+          style="margin-top: 20px"
+        >
+          Calcular
+        </button>
+        <div class="result">Resultado...</div>
+      </div>
+    </div>
+    <script src="./script/app.js"></script>
+  </body>
+</html>
