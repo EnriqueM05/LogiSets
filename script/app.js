@@ -1,28 +1,14 @@
-// botón para cambiar el tema claro/oscuro
+// selecciona los elementos del dom necesarios para la calculadora
 var themeButton = document.querySelector(".theme-button");
-
-//  input de conjunto A
 var conjuntoAInput = document.getElementById("conjuntoA");
-
-// selecciona el input de conjunto B
 var conjuntoBInput = document.getElementById("conjuntoB");
-
-// div donde se muestra la cardinalidad de A
 var cardA = document.getElementById("cardA");
-
-// div donde se muestra la cardinalidad de B
 var cardB = document.getElementById("cardB");
-
-// selector de operaciones
 var operacionSelect = document.getElementById("operacion");
-
-// botón para calcular
 var calcularBtn = document.getElementById("calcularBtn");
-
-// div donde sale el resultado
 var resultDiv = document.querySelector(".result");
 
-// cambiar a modo obscuro o claro
+// cambia entre modo claro y oscuro
 var isLight = true;
 themeButton.addEventListener("click", function () {
   document.body.classList.toggle("dark-mode");
@@ -34,41 +20,41 @@ themeButton.addEventListener("click", function () {
   }
 });
 
-// convierte el texto del input en un arreglo de números únicos entre 1 y 100
+// convierte el texto ingresado en un array de números únicos válidos (1-100)
 function parsearConjunto(texto) {
-  var partes = texto.split(",");
-  var conjunto = [];
+  var limpio = texto.replace(/[{}]/g, "");
+  var partes = limpio.split(/,|\s+/);
+  var numeros = [];
   for (var i = 0; i < partes.length; i++) {
-    var valor = partes[i].trim();
-    if (
-      valor.length > 0 &&
-      !isNaN(valor) &&
-      Number(valor) >= 1 &&
-      Number(valor) <= 100
-    ) {
-      if (conjunto.indexOf(valor) === -1) {
-        conjunto.push(valor);
-      }
+    var n = Number(partes[i].trim());
+    if (!isNaN(n) && n >= 1 && n <= 100 && numeros.indexOf(n) === -1) {
+      numeros.push(n);
     }
   }
-  return conjunto;
+  return numeros;
 }
 
-// muestra la cardinalidad del conjunto en el div correspondiente
+// devuelve la intersección de dos conjuntos
+function interseccion(A, B) {
+  var resultado = [];
+  for (var i = 0; i < A.length; i++) {
+    if (B.indexOf(A[i]) !== -1) {
+      resultado.push(A[i]);
+    }
+  }
+  return resultado;
+}
+
+// muestra la cardinalidad del conjunto en la interfaz
 function mostrarCardinalidad(input, cardDiv) {
   var conjunto = parsearConjunto(input.value);
   cardDiv.textContent = "Cardinalidad: " + conjunto.length;
 }
 
-// al cargar la página, muestra la cardinalidad inicial de ambos conjuntos
-mostrarCardinalidad(conjuntoAInput, cardA);
-mostrarCardinalidad(conjuntoBInput, cardB);
-
-// cuando se escribe en el input de A, actualiza la cardinalidad
+// actualiza la cardinalidad en tiempo real
 conjuntoAInput.addEventListener("input", function () {
   mostrarCardinalidad(conjuntoAInput, cardA);
 });
-// cuando se escribe en el input de B, actualiza la cardinalidad
 conjuntoBInput.addEventListener("input", function () {
   mostrarCardinalidad(conjuntoBInput, cardB);
 });
@@ -77,10 +63,9 @@ conjuntoBInput.addEventListener("input", function () {
 function potencia(conjunto) {
   var res = [[]];
   for (var i = 0; i < conjunto.length; i++) {
-    var elem = conjunto[i];
     var len = res.length;
     for (var j = 0; j < len; j++) {
-      res.push(res[j].concat(elem));
+      res.push(res[j].concat(conjunto[i]));
     }
   }
   return res;
@@ -97,64 +82,42 @@ function productoCartesiano(A, B) {
   return res;
 }
 
-// calcula la diferencia de conjuntos (A - B)
+// devuelve la diferencia de dos conjuntos
 function diferencia(A, B) {
-  var res = [];
+  var resultado = [];
   for (var i = 0; i < A.length; i++) {
     if (B.indexOf(A[i]) === -1) {
-      res.push(A[i]);
+      resultado.push(A[i]);
     }
   }
-  return res;
+  return resultado;
 }
 
-// calcula la unión de dos conjuntos
+// devuelve la unión de dos conjuntos
 function union(A, B) {
-  var res = [];
-  for (var i = 0; i < A.length; i++) {
-    if (res.indexOf(A[i]) === -1) {
-      res.push(A[i]);
+  var resultado = A.slice();
+  for (var i = 0; i < B.length; i++) {
+    if (resultado.indexOf(B[i]) === -1) {
+      resultado.push(B[i]);
     }
   }
-  for (var j = 0; j < B.length; j++) {
-    if (res.indexOf(B[j]) === -1) {
-      res.push(B[j]);
-    }
-  }
-  return res;
+  return resultado;
 }
 
-// calcula la intersección de dos conjuntos
-function interseccion(A, B) {
-  var res = [];
-  for (var i = 0; i < A.length; i++) {
-    if (B.indexOf(A[i]) !== -1) {
-      res.push(A[i]);
-    }
-  }
-  return res;
-}
-
-// calcula la diferencia simétrica de dos conjuntos
+// devuelve la diferencia simétrica de dos conjuntos
 function diferenciaSimetrica(A, B) {
-  var dif1 = diferencia(A, B);
-  var dif2 = diferencia(B, A);
-  return union(dif1, dif2);
+  return union(diferencia(A, B), diferencia(B, A));
 }
 
-// calcula el complemento de un conjunto respecto al universal (1 a 100)
+// devuelve el complemento de un conjunto respecto al universal (1-100)
 function complemento(A) {
   var universal = [];
   for (var i = 1; i <= 100; i++) {
-    universal.push(i.toString());
-  }
-  var res = [];
-  for (var j = 0; j < universal.length; j++) {
-    if (A.indexOf(universal[j]) === -1) {
-      res.push(universal[j]);
+    if (A.indexOf(i) === -1) {
+      universal.push(i);
     }
   }
-  return res;
+  return universal;
 }
 
 // analiza si una relación es reflexiva, simétrica y transitiva
@@ -163,7 +126,7 @@ function analizarRelacion(relacion, base) {
   for (var i = 0; i < base.length; i++) {
     var encontrado = false;
     for (var j = 0; j < relacion.length; j++) {
-      if (relacion[j][0] == base[i] && relacion[j][1] == base[i]) {
+      if (relacion[j][0] === base[i] && relacion[j][1] === base[i]) {
         encontrado = true;
         break;
       }
@@ -178,7 +141,7 @@ function analizarRelacion(relacion, base) {
     var par = relacion[i];
     var sim = false;
     for (var j = 0; j < relacion.length; j++) {
-      if (relacion[j][0] == par[1] && relacion[j][1] == par[0]) {
+      if (relacion[j][0] === par[1] && relacion[j][1] === par[0]) {
         sim = true;
         break;
       }
@@ -196,7 +159,7 @@ function analizarRelacion(relacion, base) {
         var c = relacion[j][1];
         var existe = false;
         for (var k = 0; k < relacion.length; k++) {
-          if (relacion[k][0] == a && relacion[k][1] == c) {
+          if (relacion[k][0] === a && relacion[k][1] === c) {
             existe = true;
             break;
           }
@@ -216,164 +179,169 @@ function analizarRelacion(relacion, base) {
   };
 }
 
-// elige un subconjunto aleatorio de una relación (al menos un par)
+// devuelve un subconjunto aleatorio de una relación
 function subconjuntoAleatorio(relacion) {
-  var n = 1;
-  if (relacion.length > 1) {
-    n = Math.floor(Math.random() * relacion.length);
-    if (n < 1) n = 1;
-  }
-  var copia = [];
-  for (var i = 0; i < relacion.length; i++) {
-    copia.push(relacion[i]);
-  }
+  var copia = relacion.slice();
   for (var i = copia.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
     var temp = copia[i];
     copia[i] = copia[j];
     copia[j] = temp;
   }
+  var n = Math.max(1, Math.floor(Math.random() * copia.length));
   return copia.slice(0, n);
 }
 
-// cuando se hace click en calcular, realiza la operación seleccionada y muestra el resultado
+// maneja el evento de click para calcular la operación seleccionada
 calcularBtn.addEventListener("click", function () {
   var A = parsearConjunto(conjuntoAInput.value);
   var B = parsearConjunto(conjuntoBInput.value);
   var op = operacionSelect.value;
   var resultado = "";
   try {
-    if (op === "A∩B") {
-      resultado = "A ∩ B = [" + interseccion(A, B).join(", ") + "]";
-    } else if (op === "A∪B") {
-      resultado = "A ∪ B = [" + union(A, B).join(", ") + "]";
-    } else if (op === "A-B") {
-      resultado = "A - B = [" + diferencia(A, B).join(", ") + "]";
-    } else if (op === "B-A") {
-      resultado = "B - A = [" + diferencia(B, A).join(", ") + "]";
-    } else if (op === "A∆B") {
-      resultado = "A ∆ B = [" + diferenciaSimetrica(A, B).join(", ") + "]";
-    } else if (op === "Ac") {
-      resultado = "Ac = [" + complemento(A).join(", ") + "]";
-    } else if (op === "Bc") {
-      resultado = "Bc = [" + complemento(B).join(", ") + "]";
-    } else if (op === "A×B") {
-      var prod = productoCartesiano(A, B);
-      var pares = [];
-      for (var i = 0; i < prod.length; i++) {
-        pares.push("[" + prod[i][0] + "," + prod[i][1] + "]");
-      }
-      resultado = "A × B = {" + pares.join(", ") + "}";
-    } else if (op === "B×A") {
-      var prod = productoCartesiano(B, A);
-      var pares = [];
-      for (var i = 0; i < prod.length; i++) {
-        pares.push("[" + prod[i][0] + "," + prod[i][1] + "]");
-      }
-      resultado = "B × A = {" + pares.join(", ") + "}";
-    } else if (op === "A×A") {
-      var prod = productoCartesiano(A, A);
-      var pares = [];
-      for (var i = 0; i < prod.length; i++) {
-        pares.push("[" + prod[i][0] + "," + prod[i][1] + "]");
-      }
-      resultado = "A × A = {" + pares.join(", ") + "}";
-    } else if (op === "B×B") {
-      var prod = productoCartesiano(B, B);
-      var pares = [];
-      for (var i = 0; i < prod.length; i++) {
-        pares.push("[" + prod[i][0] + "," + prod[i][1] + "]");
-      }
-      resultado = "B × B = {" + pares.join(", ") + "}";
-    } else if (op === "P(A)") {
-      var pot = potencia(A);
-      var subconjuntos = [];
-      for (var i = 0; i < pot.length; i++) {
-        subconjuntos.push("{" + pot[i].join(",") + "}");
-      }
-      resultado = "P(A) = {" + subconjuntos.join(", ") + "}";
-    } else if (op === "P(B)") {
-      var pot = potencia(B);
-      var subconjuntos = [];
-      for (var i = 0; i < pot.length; i++) {
-        subconjuntos.push("{" + pot[i].join(",") + "}");
-      }
-      resultado = "P(B) = {" + subconjuntos.join(", ") + "}";
-    } else if (op === "|A|") {
-      resultado = "|A| = " + A.length;
-    } else if (op === "|B|") {
-      resultado = "|B| = " + B.length;
-    } else if (op === "analizarA×B") {
-      var rel = subconjuntoAleatorio(productoCartesiano(A, B));
-      var props = analizarRelacion(rel, A);
-      var pares = [];
-      for (var i = 0; i < rel.length; i++) {
-        pares.push("[" + rel[i][0] + "," + rel[i][1] + "]");
-      }
-      resultado =
-        "Subconjunto aleatorio de A×B: {" +
-        pares.join(", ") +
-        "}\nReflexiva: " +
-        (props.reflexiva ? "Sí" : "No") +
-        " | Simétrica: " +
-        (props.simetrica ? "Sí" : "No") +
-        " | Transitiva: " +
-        (props.transitiva ? "Sí" : "No");
-    } else if (op === "analizarB×A") {
-      var rel = subconjuntoAleatorio(productoCartesiano(B, A));
-      var props = analizarRelacion(rel, B);
-      var pares = [];
-      for (var i = 0; i < rel.length; i++) {
-        pares.push("[" + rel[i][0] + "," + rel[i][1] + "]");
-      }
-      resultado =
-        "Subconjunto aleatorio de B×A: {" +
-        pares.join(", ") +
-        "}\nReflexiva: " +
-        (props.reflexiva ? "Sí" : "No") +
-        " | Simétrica: " +
-        (props.simetrica ? "Sí" : "No") +
-        " | Transitiva: " +
-        (props.transitiva ? "Sí" : "No");
-    } else if (op === "analizarA×A") {
-      var rel = subconjuntoAleatorio(productoCartesiano(A, A));
-      var props = analizarRelacion(rel, A);
-      var pares = [];
-      for (var i = 0; i < rel.length; i++) {
-        pares.push("[" + rel[i][0] + "," + rel[i][1] + "]");
-      }
-      resultado =
-        "Subconjunto aleatorio de A×A: {" +
-        pares.join(", ") +
-        "}\nReflexiva: " +
-        (props.reflexiva ? "Sí" : "No") +
-        " | Simétrica: " +
-        (props.simetrica ? "Sí" : "No") +
-        " | Transitiva: " +
-        (props.transitiva ? "Sí" : "No");
-    } else if (op === "analizarB×B") {
-      var rel = subconjuntoAleatorio(productoCartesiano(B, B));
-      var props = analizarRelacion(rel, B);
-      var pares = [];
-      for (var i = 0; i < rel.length; i++) {
-        pares.push("[" + rel[i][0] + "," + rel[i][1] + "]");
-      }
-      resultado =
-        "Subconjunto aleatorio de B×B: {" +
-        pares.join(", ") +
-        "}\nReflexiva: " +
-        (props.reflexiva ? "Sí" : "No") +
-        " | Simétrica: " +
-        (props.simetrica ? "Sí" : "No") +
-        " | Transitiva: " +
-        (props.transitiva ? "Sí" : "No");
-    } else {
-      resultado = "Operación no soportada.";
+    switch (op) {
+      case "A∩B":
+        resultado = "A ∩ B = [" + interseccion(A, B).join(", ") + "]";
+        break;
+      case "A∪B":
+        resultado = "A ∪ B = [" + union(A, B).join(", ") + "]";
+        break;
+      case "A-B":
+        resultado = "A - B = [" + diferencia(A, B).join(", ") + "]";
+        break;
+      case "B-A":
+        resultado = "B - A = [" + diferencia(B, A).join(", ") + "]";
+        break;
+      case "A∆B":
+        resultado = "A ∆ B = [" + diferenciaSimetrica(A, B).join(", ") + "]";
+        break;
+      case "Ac":
+        resultado = "Ac = [" + complemento(A).join(", ") + "]";
+        break;
+      case "Bc":
+        resultado = "Bc = [" + complemento(B).join(", ") + "]";
+        break;
+      case "A×B":
+        var prodAB = productoCartesiano(A, B);
+        var paresAB = [];
+        for (var i = 0; i < prodAB.length; i++) {
+          paresAB.push("[" + prodAB[i][0] + "," + prodAB[i][1] + "]");
+        }
+        resultado = "A × B = {" + paresAB.join(", ") + "}";
+        break;
+      case "B×A":
+        var prodBA = productoCartesiano(B, A);
+        var paresBA = [];
+        for (var i = 0; i < prodBA.length; i++) {
+          paresBA.push("[" + prodBA[i][0] + "," + prodBA[i][1] + "]");
+        }
+        resultado = "B × A = {" + paresBA.join(", ") + "}";
+        break;
+      case "A×A":
+        var prodAA = productoCartesiano(A, A);
+        var paresAA = [];
+        for (var i = 0; i < prodAA.length; i++) {
+          paresAA.push("[" + prodAA[i][0] + "," + prodAA[i][1] + "]");
+        }
+        resultado = "A × A = {" + paresAA.join(", ") + "}";
+        break;
+      case "B×B":
+        var prodBB = productoCartesiano(B, B);
+        var paresBB = [];
+        for (var i = 0; i < prodBB.length; i++) {
+          paresBB.push("[" + prodBB[i][0] + "," + prodBB[i][1] + "]");
+        }
+        resultado = "B × B = {" + paresBB.join(", ") + "}";
+        break;
+      case "P(A)":
+        var potA = potencia(A);
+        var strPotA = [];
+        for (var i = 0; i < potA.length; i++) {
+          strPotA.push("{" + potA[i].join(",") + "}");
+        }
+        resultado = "P(A) = {" + strPotA.join(", ") + "}";
+        break;
+      case "P(B)":
+        var potB = potencia(B);
+        var strPotB = [];
+        for (var i = 0; i < potB.length; i++) {
+          strPotB.push("{" + potB[i].join(",") + "}");
+        }
+        resultado = "P(B) = {" + strPotB.join(", ") + "}";
+        break;
+      case "|A|":
+        resultado = "|A| = " + A.length;
+        break;
+      case "|B|":
+        resultado = "|B| = " + B.length;
+        break;
+      case "analizarA×B":
+        var relAB = subconjuntoAleatorio(productoCartesiano(A, B));
+        var propsAB = analizarRelacion(relAB, A);
+        resultado =
+          "Subconjunto aleatorio de A×B: {" +
+          relAB
+            .map(function (p) {
+              return "[" + p[0] + "," + p[1] + "]";
+            })
+            .join(", ") +
+          "}";
+        resultado += "<br>reflexiva: " + (propsAB.reflexiva ? "sí" : "no");
+        resultado += " | simétrica: " + (propsAB.simetrica ? "sí" : "no");
+        resultado += " | transitiva: " + (propsAB.transitiva ? "sí" : "no");
+        break;
+      case "analizarB×A":
+        var relBA = subconjuntoAleatorio(productoCartesiano(B, A));
+        var propsBA = analizarRelacion(relBA, B);
+        resultado =
+          "Subconjunto aleatorio de B×A: {" +
+          relBA
+            .map(function (p) {
+              return "[" + p[0] + "," + p[1] + "]";
+            })
+            .join(", ") +
+          "}";
+        resultado += "<br>reflexiva: " + (propsBA.reflexiva ? "sí" : "no");
+        resultado += " | simétrica: " + (propsBA.simetrica ? "sí" : "no");
+        resultado += " | transitiva: " + (propsBA.transitiva ? "sí" : "no");
+        break;
+      case "analizarA×A":
+        var relAA = subconjuntoAleatorio(productoCartesiano(A, A));
+        var propsAA = analizarRelacion(relAA, A);
+        resultado =
+          "Subconjunto aleatorio de A×A: {" +
+          relAA
+            .map(function (p) {
+              return "[" + p[0] + "," + p[1] + "]";
+            })
+            .join(", ") +
+          "}";
+        resultado += "<br>reflexiva: " + (propsAA.reflexiva ? "sí" : "no");
+        resultado += " | simétrica: " + (propsAA.simetrica ? "sí" : "no");
+        resultado += " | transitiva: " + (propsAA.transitiva ? "sí" : "no");
+        break;
+      case "analizarB×B":
+        var relBB = subconjuntoAleatorio(productoCartesiano(B, B));
+        var propsBB = analizarRelacion(relBB, B);
+        resultado =
+          "Subconjunto aleatorio de B×B: {" +
+          relBB
+            .map(function (p) {
+              return "[" + p[0] + "," + p[1] + "]";
+            })
+            .join(", ") +
+          "}";
+        resultado += "<br>reflexiva: " + (propsBB.reflexiva ? "sí" : "no");
+        resultado += " | simétrica: " + (propsBB.simetrica ? "sí" : "no");
+        resultado += " | transitiva: " + (propsBB.transitiva ? "sí" : "no");
+        break;
+      default:
+        resultado = "operación no soportada.";
     }
-    resultDiv.textContent = resultado;
+    resultDiv.innerHTML = resultado;
     resultDiv.style.color = "green";
   } catch (e) {
-    resultDiv.textContent = "Error: " + e.message;
+    resultDiv.textContent = "error: " + e.message;
     resultDiv.style.color = "red";
   }
 });
