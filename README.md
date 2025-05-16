@@ -1,5 +1,7 @@
 # LogiSets
 
+**Made by Enrique Milo, Camila Briseño, Jorge Delgadillo y Sofía Camacho**
+
 **LogiSets** is a lightweight macOS app created with Electron for performing set operations on two user-defined sets. Simply enter two sets and select an operation, and LogiSets instantly calculates the result.
 
 This app was created as part of a Logic and Discrete Structures course project at ITESO.
